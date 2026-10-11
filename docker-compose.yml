@@ -15,6 +15,24 @@ services:
     networks:
     - mandarin-net
 
+  app:
+      build: .
+      container_name: mandarin_app
+      ports:
+        - "8081:8080"
+      environment:
+        - DB_HOST=postgres
+        - DB_PORT=5432
+        - DB_USER=postgres
+        - DB_PASSWORD=postgres
+        - DB_NAME=mandarindb
+        - DB_SSLMODE=disable
+        - SERVER_PORT=8080
+      depends_on:
+        - postgres
+      networks:
+        - mandarin-net
+
 volumes:
   pgdata:
 
