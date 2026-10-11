@@ -19,7 +19,7 @@ func main() {
 	_ = godotenv.Load()
 	serverPort := os.Getenv("SERVER_PORT")
 	if serverPort == "" {
-		serverPort = "8080"
+		serverPort = "8081"
 	}
 
 	fmt.Println("Iniciando o servidor da aplicação Mandarim...")

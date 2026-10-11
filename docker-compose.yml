@@ -3,33 +3,39 @@ services:
     image: postgres:15-alpine
     container_name: mandarin_postgres
     environment:
-    - POSTGRES_USER=postgres
-    - POSTGRES_PASSWORD=postgres
-    - POSTGRES_DB=mandarindb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mandarindb
     ports:
-    - "5433:5432"
+      - "5433:5432"
     volumes:
-    - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     networks:
-    - mandarin-net
+      - mandarin-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d mandarindb"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   app:
-      build: .
-      container_name: mandarin_app
-      ports:
-        - "8081:8080"
-      environment:
-        - DB_HOST=postgres
-        - DB_PORT=5432
-        - DB_USER=postgres
-        - DB_PASSWORD=postgres
-        - DB_NAME=mandarindb
-        - DB_SSLMODE=disable
-        - SERVER_PORT=8080
-      depends_on:
-        - postgres
-      networks:
-        - mandarin-net
+    build: .
+    container_name: mandarin_app
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: mandarindb
+      DB_SSLMODE: disable
+      SERVER_PORT: 8081
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mandarin-net
 
 volumes:
   pgdata:

@@ -1,11 +1,13 @@
 package handlers
 
 import (
-	"encoding/json"
-	"net/http"
+    "encoding/json"
+    "errors"
+    "log/slog"
+    "net/http"
 
-	"mandarin-app/internal/entity"
-	"mandarin-app/internal/usecase"
+    "mandarin-app/internal/entity"
+    "mandarin-app/internal/usecase"
 )
 
 type IdeogramHandler struct {
@@ -36,11 +38,17 @@ func (h *IdeogramHandler) TranslateHandler(w http.ResponseWriter, r *http.Reques
 	// Executa a regra de negócio através do UseCase
 	result, err := h.translateUseCase.Execute(r.Context(), text)
 	if err != nil {
-		if err == entity.ErrEmptyCharacter {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
+		if errors.Is(err, entity.ErrEmptyCharacter) {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+				return
 		}
-		http.Error(w, "Erro interno ao processar tradução", http.StatusInternalServerError)
+
+		slog.Error("falha ao processar tradução", "error", err)
+		http.Error(
+				w,
+				"Erro interno ao processar tradução",
+				http.StatusInternalServerError,
+		)
 		return
 	}
 

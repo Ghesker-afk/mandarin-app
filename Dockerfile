@@ -25,7 +25,7 @@ RUN apk --no-cache add ca-certificates
 COPY --from=builder /app/bin/server .
 
 # Expõe a porta em que o servidor HTTP vai rodar
-EXPOSE 8080
+EXPOSE 8081
 
 # Comando para executar a aplicação
 CMD ["./server"]
