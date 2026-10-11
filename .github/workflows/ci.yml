@@ -1,11 +1,13 @@
 name: CI/CD Pipeline - Mandarim App
 
-# Dispara o pipeline automaticamente sempre que houver um push ou pull request na branch main
+# Dispara o pipeline automaticamente sempre que houver um push ou pull request na branch master
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "master" ]
+  workflow_dispatch:
+  
 
 jobs:
   build-and-test:
@@ -39,4 +41,4 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        push: false # Apenas valida o build localmente no workflow, sem enviar para registries externos por enquanto
+        push: false # Apenas valida o build localmente no workflow, sem enviar para registries externos por enquantoq
