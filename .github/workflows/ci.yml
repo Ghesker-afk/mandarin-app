@@ -1,0 +1,42 @@
+name: CI/CD Pipeline - Mandarim App
+
+# Dispara o pipeline automaticamente sempre que houver um push ou pull request na branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Faz o checkout do código do repositório no runner do GitHub
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Configura a linguagem Go no ambiente de CI
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.25' # Alinhado com a versão do seu projeto
+
+    # 3. Baixa as dependências do projeto
+    - name: Install Dependencies
+      run: go mod download
+
+    # 4. Roda os testes automatizados (quando criarmos)
+    - name: Run Tests
+      run: go test -v ./...
+
+    # 5. Testa a compilação do binário para garantir que não há erros de sintaxe
+    - name: Build Application Binary
+      run: CGO_ENABLED=0 GOOS=linux go build -o /tmp/server ./cmd/server/main.go
+
+    # 6. Testa o build da imagem Docker para garantir que o Dockerfile está íntegro
+    - name: Test Docker Image Build
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false # Apenas valida o build localmente no workflow, sem enviar para registries externos por enquanto
