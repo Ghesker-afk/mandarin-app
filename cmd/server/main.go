@@ -24,14 +24,20 @@ func main() {
 
 	fmt.Println("Iniciando o servidor da aplicação Mandarim...")
 
-	// 1. Conecta ao banco de dados (retorna o *pgxpool.Pool)
-	dbPool := database.ConnectDB()
-	defer dbPool.Close(context.Background())
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Arquivo .env não encontrado; usando variáveis de ambiente")
+	}
 
 	ctx := context.Background()
 
+	dbConn, err := database.ConnectDB(ctx)
+	if err != nil {
+		log.Fatalf("Erro ao conectar ao banco de dados: %v", err)
+	}
+	defer dbConn.Close(ctx)
+
 	// 3. Montando a Clean Architecture: Infra -> Usecase -> Handler
-	ideogramRepo := postgres.NewPostgresIdeogramRepository(dbPool)
+	ideogramRepo := postgres.NewPostgresIdeogramRepository(dbConn)
 	translateUC := usecase.NewTranslateIdeogramUseCase(ideogramRepo)
 	ideogramHandler := handlers.NewIdeogramHandler(translateUC)
 
