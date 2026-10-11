@@ -1,0 +1,11 @@
+/bin/
+*.exe
+*.out
+
+/data/postgres/
+
+.env
+
+.vscode/
+.DS_Store
+Thumbs.db
