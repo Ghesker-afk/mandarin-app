@@ -1,80 +1,51 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 
-	"github.com/jackc/pgx/v5"
+	"mandarin-app/internal/entity"
+	"mandarin-app/internal/usecase"
 )
 
-type Ideogram struct {
-	ID              int    `json:"id"`
-	Character       string `json:"character"`
-	Pinyin          string `json:"pinyin"`
-	Meaning         string `json:"meaning"`
-	ExampleSentence string `json:"example_sentence"`
-}
-
 type IdeogramHandler struct {
-	DB *pgx.Conn
+	translateUseCase *usecase.TranslateIdeogramUseCase
 }
 
-func NewIdeogramHandler(db *pgx.Conn) *IdeogramHandler {
-	return &IdeogramHandler{DB: db}
+// NewIdeogramHandler injeta o caso de uso no handler
+func NewIdeogramHandler(translateUseCase *usecase.TranslateIdeogramUseCase) *IdeogramHandler {
+	return &IdeogramHandler{
+		translateUseCase: translateUseCase,
+	}
 }
 
-// Handler para criar um novo ideograma (POST)
-func (h *IdeogramHandler) CreateIdeogram(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
-	var item Ideogram
-	err := json.NewDecoder(r.Body).Decode(&item)
-	if err != nil {
-		http.Error(w, "Dados inválidos", http.StatusBadRequest)
-		return
-	}
-
-	query := `INSERT INTO ideograms (character, pinyin, meaning, example_sentence) VALUES ($1, $2, $3, $4) RETURNING id`
-	var id int
-	err = h.DB.QueryRow(context.Background(), query, item.Character, item.Pinyin, item.Meaning, item.ExampleSentence).Scan(&id)
-	if err != nil {
-		http.Error(w, "Erro ao salvar no banco de dados", http.StatusInternalServerError)
-		return
-	}
-
-	item.ID = id
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(item)
-}
-
-// Handler para listar todos os ideogramas (GET)
-func (h *IdeogramHandler) ListIdeograms(w http.ResponseWriter, r *http.Request) {
+// TranslateHandler lida com a rota GET /translate?text=... ou POST de tradução
+func (h *IdeogramHandler) TranslateHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "Método não permitido", http.StatusMethodNotAllowed)
 		return
 	}
 
-	rows, err := h.DB.Query(context.Background(), `SELECT id, character, pinyin, meaning, example_sentence FROM ideograms ORDER BY id DESC`)
-	if err != nil {
-		http.Error(w, "Erro ao buscar ideogramas", http.StatusInternalServerError)
+	// Extrai o texto da query string (ex: /translate?text=永)
+	text := r.URL.Query().Get("text")
+	if text == "" {
+		http.Error(w, "O parâmetro 'text' é obrigatório", http.StatusBadRequest)
 		return
 	}
-	defer rows.Close()
 
-	var ideograms []Ideogram
-	for rows.Next() {
-		var i Ideogram
-		if err := rows.Scan(&i.ID, &i.Character, &i.Pinyin, &i.Meaning, &i.ExampleSentence); err != nil {
-			continue
+	// Executa a regra de negócio através do UseCase
+	result, err := h.translateUseCase.Execute(r.Context(), text)
+	if err != nil {
+		if err == entity.ErrEmptyCharacter {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
 		}
-		ideograms = append(ideograms, i)
+		http.Error(w, "Erro interno ao processar tradução", http.StatusInternalServerError)
+		return
 	}
 
+	// Retorna o resultado estruturado em JSON
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(ideograms)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(result)
 }

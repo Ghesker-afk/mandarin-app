@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"mandarin-app/internal/database"
-	"mandarin-app/internal/handlers"
 	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
+
+	"mandarin-app/internal/database"
+	"mandarin-app/internal/handlers"
+	"mandarin-app/internal/repository/postgres"
+	"mandarin-app/internal/usecase"
 )
 
 func main() {
@@ -21,41 +24,39 @@ func main() {
 
 	fmt.Println("Iniciando o servidor da aplicação Mandarim...")
 
-	// Conecta ao banco de dados e executa migrações
-	conn := database.ConnectDB()
-	defer conn.Close(context.Background())
+	// 1. Conecta ao banco de dados (retorna o *pgxpool.Pool)
+	dbPool := database.ConnectDB()
+	defer dbPool.Close(context.Background())
 
 	ctx := context.Background()
 
+	// 2. Ajustado para alinhar com a struct Ideogram (com meanigs como array, radical e stroke_count)
 	query := `
 	CREATE TABLE IF NOT EXISTS ideograms (
 		id SERIAL PRIMARY KEY,
-		character VARCHAR(10) NOT NULL,
+		character VARCHAR(10) NOT NULL UNIQUE,
 		pinyin VARCHAR(50) NOT NULL,
-		meaning TEXT NOT NULL,
-		example_sentence TEXT,
+		meanings TEXT[] NOT NULL,
+		radical VARCHAR(10),
+		stroke_count INT,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	);
 	`
-	_, err := conn.Exec(ctx, query)
+	_, err := dbPool.Exec(ctx, query)
 	if err != nil {
 		log.Fatalf("Erro ao criar a tabela ideograms: %v\n", err)
 	}
 
-	// Configura os Handlers e Rotas
-	ideogramHandler := handlers.NewIdeogramHandler(conn)
+	// 3. Montando a Clean Architecture: Infra -> Usecase -> Handler
+	ideogramRepo := postgres.NewPostgresIdeogramRepository(dbPool)
+	translateUC := usecase.NewTranslateIdeogramUseCase(ideogramRepo)
+	ideogramHandler := handlers.NewIdeogramHandler(translateUC)
+
+	// 4. Configura as Rotas usando o net/http moderno (Go 1.22+)
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/ideograms", func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodPost:
-			ideogramHandler.CreateIdeogram(w, r)
-		case http.MethodGet:
-			ideogramHandler.ListIdeograms(w, r)
-		default:
-			http.Error(w, "Método não suportado", http.StatusMethodNotAllowed)
-		}
-	})
+	// Rota de tradução estruturada
+	mux.HandleFunc("GET /translate", ideogramHandler.TranslateHandler)
 
 	fmt.Printf("Servidor HTTP rodando na porta %s...\n", serverPort)
 	if err := http.ListenAndServe(":"+serverPort, mux); err != nil {

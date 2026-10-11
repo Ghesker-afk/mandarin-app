@@ -17,7 +17,6 @@ func NewTranslateIdeogramUseCase(repo entity.IdeogramRepository) *TranslateIdeog
 	}
 }
 
-// Execute processa uma string contendo ideogramas e retorna a tradução detalhada
 func (uc *TranslateIdeogramUseCase) Execute(ctx context.Context, text string) (*entity.TranslationResult, error) {
 	text = strings.TrimSpace(text)
 	if text == "" {
