@@ -61,3 +61,10 @@ func TestTranslateHandlerReal(t *testing.T) {
 		t.Errorf("content-type incorreto: got %v, want %v", ct, "application/json")
 	}
 }
+
+func (m *mockRepoForHandler) Create(
+	ctx context.Context,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return ideog, nil
+}

@@ -5,6 +5,7 @@ import "errors"
 var (
 	ErrEmptyCharacter = errors.New("o caractere ideográfico não pode ser vazio")
 	ErrNotFound       = errors.New("ideograma não encontrado")
+	ErrAlreadyExists  = errors.New("ideogram already exists")
 )
 
 // Ideogram representa a entidade de um ideograma mandarim no nosso sistema

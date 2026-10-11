@@ -12,7 +12,6 @@ import (
 
 // 1. Criamos um Mock do Repositório que simula o banco de dados em memória
 type MockIdeogramRepository struct {
-	// Podemos injetar comportamentos customizados para cada teste se quisermos
 	mockData    map[string]entity.Ideogram
 	shouldError bool
 }
@@ -84,4 +83,11 @@ func TestTranslateIdeogramUseCase_EmptyText(t *testing.T) {
 	if !errors.Is(err, entity.ErrEmptyCharacter) {
 		t.Errorf("esperava o erro ErrEmptyCharacter, obteve: %v", err)
 	}
+}
+
+func (m *MockIdeogramRepository) Create(
+	ctx context.Context,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return ideog, nil
 }
