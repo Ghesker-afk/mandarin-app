@@ -29,18 +29,34 @@ O **Mandarin App** é uma plataforma desenvolvida para auxiliar estudantes no ap
 
 ```text
 mandarin-app/
-├── cmd/          
-│   ├── server/
-│   │   ├── main.go
-├── internal/          # Código-fonte do Backend
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── cmd/
+│   └── server/
+│       └── main.go
+├── internal/
 │   ├── database/
-│   │   ├── db.go
+│   │   └── db.go
 │   ├── entity/
-│   │   ├── ideogram_entity.go
+│   │   ├── ideogram.go
+│   │   └── repository.go
 │   ├── handlers/
-│   │   ├── ideogram_handler.go
+│   │   ├── ideogram.go
+│   │   └── ideogram_test.go
 │   ├── repository/
-│   │   ├── ideogram_repository.go
-│   ├── usecase/
-│   │   ├── translate_ideogram.go
-└── README.md
+│   │   └── postgres/
+│   │       └── ideogram_repository.go
+│   └── usecase/
+│       ├── translate_ideogram.go
+│       └── translate_ideogram_test.go
+├── .env
+├── .env.example
+├── .gitignore
+├── docker-compose.yml
+├── Dockerfile
+├── go.mod
+└── go.sum
+```
+
+
