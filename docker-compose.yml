@@ -37,6 +37,22 @@ services:
     networks:
       - mandarin-net
 
+  migrate:
+    image: migrate/migrate:v4.19.1
+    profiles: ["tools"]
+    volumes:
+      - ./migrations:/migrations:ro
+    command:
+      - "-path=/migrations"
+      - "-database"
+      - "postgres://postgres:postgres@postgres:5432/mandarindb?sslmode=disable"
+      - "up"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mandarin-net
+
 volumes:
   pgdata:
 

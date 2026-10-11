@@ -1,6 +1,7 @@
 /bin/
 *.exe
 *.out
+backup_*.sql
 
 /data/postgres/
 

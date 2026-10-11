@@ -30,23 +30,6 @@ func main() {
 
 	ctx := context.Background()
 
-	// 2. Ajustado para alinhar com a struct Ideogram (com meanigs como array, radical e stroke_count)
-	query := `
-	CREATE TABLE IF NOT EXISTS ideograms (
-		id SERIAL PRIMARY KEY,
-		character VARCHAR(10) NOT NULL UNIQUE,
-		pinyin VARCHAR(50) NOT NULL,
-		meanings TEXT[] NOT NULL,
-		radical VARCHAR(10),
-		stroke_count INT,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-	);
-	`
-	_, err := dbPool.Exec(ctx, query)
-	if err != nil {
-		log.Fatalf("Erro ao criar a tabela ideograms: %v\n", err)
-	}
-
 	// 3. Montando a Clean Architecture: Infra -> Usecase -> Handler
 	ideogramRepo := postgres.NewPostgresIdeogramRepository(dbPool)
 	translateUC := usecase.NewTranslateIdeogramUseCase(ideogramRepo)
