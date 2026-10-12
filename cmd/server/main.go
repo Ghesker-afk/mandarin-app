@@ -51,6 +51,11 @@ func main() {
 	createIdeogramHandler := handlers.NewCreateIdeogramHandler(createIdeogramUseCase)
 	mux.Handle("POST /ideograms", createIdeogramHandler)
 
+	getIdeogramByCharacterUseCase := usecase.NewGetIdeogramByCharacterUseCase(ideogramRepo)
+	getIdeogramByCharacterHandler := handlers.NewGetIdeogramByCharacterHandler(getIdeogramByCharacterUseCase)
+
+	mux.Handle("GET /ideograms/{character}", getIdeogramByCharacterHandler)
+
 	fmt.Printf("Servidor HTTP rodando na porta %s...\n", serverPort)
 	if err := http.ListenAndServe(":"+serverPort, mux); err != nil {
 		log.Fatalf("Erro ao iniciar o servidor: %v\n", err)
