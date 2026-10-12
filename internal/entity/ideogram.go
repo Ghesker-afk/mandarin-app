@@ -6,6 +6,8 @@ var (
 	ErrEmptyCharacter = errors.New("o caractere ideográfico não pode ser vazio")
 	ErrNotFound       = errors.New("ideograma não encontrado")
 	ErrAlreadyExists  = errors.New("ideogram already exists")
+	ErrEmptyPinyin    = errors.New("pinyin is required")
+	ErrEmptyMeanings  = errors.New("at least one meaning is required")
 )
 
 // Ideogram representa a entidade de um ideograma mandarim no nosso sistema

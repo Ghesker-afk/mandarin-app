@@ -39,7 +39,7 @@ func (uc *CreateIdeogramUseCase) Execute(
 	}
 
 	if ideog.Pinyin == "" {
-		return nil, errors.New("pinyin é obrigatório")
+		return nil, entity.ErrEmptyPinyin
 	}
 
 	meanings := make([]string, 0, len(ideog.Meanings))
@@ -53,7 +53,7 @@ func (uc *CreateIdeogramUseCase) Execute(
 	}
 
 	if len(meanings) == 0 {
-		return nil, errors.New("pelo menos um significado é obrigatório")
+		return nil, entity.ErrEmptyMeanings
 	}
 
 	ideog.Meanings = meanings

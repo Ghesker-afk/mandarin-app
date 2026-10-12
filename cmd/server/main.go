@@ -47,6 +47,10 @@ func main() {
 	// Rota de tradução estruturada
 	mux.HandleFunc("GET /translate", ideogramHandler.TranslateHandler)
 
+	createIdeogramUseCase := usecase.NewCreateIdeogramUseCase(ideogramRepo)
+	createIdeogramHandler := handlers.NewCreateIdeogramHandler(createIdeogramUseCase)
+	mux.Handle("POST /ideograms", createIdeogramHandler)
+
 	fmt.Printf("Servidor HTTP rodando na porta %s...\n", serverPort)
 	if err := http.ListenAndServe(":"+serverPort, mux); err != nil {
 		log.Fatalf("Erro ao iniciar o servidor: %v\n", err)
