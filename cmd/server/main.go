@@ -57,6 +57,10 @@ func main() {
 	searchIdeogramsByMeaningUseCase := usecase.NewSearchIdeogramsByMeaningUseCase(ideogramRepo)
 	searchIdeogramsByMeaningHandler := handlers.NewSearchIdeogramsByMeaningHandler(searchIdeogramsByMeaningUseCase)
 
+	updateIdeogramUseCase := usecase.NewUpdateIdeogramUseCase(ideogramRepo)
+	updateIdeogramHandler := handlers.NewUpdateIdeogramHandler(updateIdeogramUseCase)
+	mux.Handle("PUT /ideograms/{character}", updateIdeogramHandler)
+
 	mux.Handle("GET /ideograms/{character}", getIdeogramByCharacterHandler)
 	mux.Handle("GET /ideograms/search", searchIdeogramsByMeaningHandler)
 

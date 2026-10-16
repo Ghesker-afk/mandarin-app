@@ -70,5 +70,3 @@ mandarin-app/
 - **repositories/:** Define os mecanismos de acesso e persistência dos dados utilizados pela aplicação. Os repositórios abstraem os detalhes de armazenamento e recuperação das informações, permitindo que os casos de uso trabalhem com contratos de acesso a dados sem precisar conhecer os detalhes de sua implementação.
 
 - **entities/:** Contém as estruturas que representam os conceitos e objetos centrais do domínio da aplicação. As entidades definem os dados e, quando aplicável, o comportamento associado a esses conceitos, servindo como modelos compartilhados entre as diferentes camadas do sistema.
-
-

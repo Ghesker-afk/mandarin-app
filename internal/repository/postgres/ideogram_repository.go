@@ -12,10 +12,9 @@ import (
 )
 
 type PostgresIdeogramRepository struct {
-	db *pgx.Conn // Alterado de *pgxpool.Pool para *pgx.Conn
+	db *pgx.Conn
 }
 
-// NewPostgresIdeogramRepository recebe *pgx.Conn para combinar com o ConnectDB
 func NewPostgresIdeogramRepository(db *pgx.Conn) *PostgresIdeogramRepository {
 	return &PostgresIdeogramRepository{
 		db: db,
@@ -147,4 +146,53 @@ func (r *PostgresIdeogramRepository) Create(ctx context.Context, ideog *entity.I
 	}
 
 	return ideog, nil
+}
+
+func (r *PostgresIdeogramRepository) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	query := `
+		UPDATE ideograms
+		SET
+			pinyin = $1,
+			meanings = $2,
+			radical = $3,
+			stroke_count = $4
+		WHERE character = $5
+		RETURNING id, character, pinyin, meanings, radical, stroke_count;
+	`
+
+	var updated entity.Ideogram
+
+	err := r.db.QueryRow(
+		ctx,
+		query,
+		ideog.Pinyin,
+		ideog.Meanings,
+		ideog.Radical,
+		ideog.StrokeCount,
+		character,
+	).Scan(
+		&updated.ID,
+		&updated.Character,
+		&updated.Pinyin,
+		&updated.Meanings,
+		&updated.Radical,
+		&updated.StrokeCount,
+	)
+
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, entity.ErrNotFound
+		}
+
+		return nil, fmt.Errorf(
+			"erro ao atualizar ideograma no banco: %w",
+			err,
+		)
+	}
+
+	return &updated, nil
 }

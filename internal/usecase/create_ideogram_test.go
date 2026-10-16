@@ -187,3 +187,11 @@ func TestCreateIdeogramUseCase_ExecuteNilIdeogram(t *testing.T) {
 		t.Error("repositório não deveria ser chamado")
 	}
 }
+
+func (m *createIdeogramRepoMock) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}

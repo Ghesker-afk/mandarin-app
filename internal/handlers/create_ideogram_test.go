@@ -46,6 +46,14 @@ func (m *createIdeogramHandlerMockRepo) Create(
 	return ideog, nil
 }
 
+func (m *createIdeogramHandlerMockRepo) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}
+
 func newCreateIdeogramTestHandler(
 	repo *createIdeogramHandlerMockRepo,
 ) http.Handler {

@@ -33,6 +33,14 @@ func (m *MockIdeogramRepository) SearchByMeaning(ctx context.Context, meaning st
 	return nil, nil
 }
 
+func (m *MockIdeogramRepository) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}
+
 // 2. Teste Unitário da Regra de Negócio de Tradução
 func TestTranslateIdeogramUseCase_Execute(t *testing.T) {
 	// Preparamos dados falsos que estariam no "banco"

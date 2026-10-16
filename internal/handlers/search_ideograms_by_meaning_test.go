@@ -37,6 +37,14 @@ func (m *searchMeaningHandlerMockRepo) Create(
 	return nil, nil
 }
 
+func (m *searchMeaningHandlerMockRepo) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}
+
 func newSearchMeaningTestHandler(
 	repo *searchMeaningHandlerMockRepo,
 ) http.Handler {

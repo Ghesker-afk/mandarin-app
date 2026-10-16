@@ -33,6 +33,14 @@ func (m *getIdeogramMockRepository) Create(
 	return nil, nil
 }
 
+func (m *getIdeogramMockRepository) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}
+
 func TestGetIdeogramByCharacter(t *testing.T) {
 	t.Run("retorna ideograma encontrado", func(t *testing.T) {
 		expected := &entity.Ideogram{

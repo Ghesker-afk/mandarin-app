@@ -68,3 +68,11 @@ func (m *mockRepoForHandler) Create(
 ) (*entity.Ideogram, error) {
 	return ideog, nil
 }
+
+func (m *mockRepoForHandler) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}

@@ -34,6 +34,14 @@ func (m *searchMeaningMockRepository) Create(
 	return nil, nil
 }
 
+func (m *searchMeaningMockRepository) Update(
+	ctx context.Context,
+	character string,
+	ideog *entity.Ideogram,
+) (*entity.Ideogram, error) {
+	return nil, entity.ErrNotFound
+}
+
 func TestSearchIdeogramsByMeaning(t *testing.T) {
 	t.Run("retorna ideogramas encontrados", func(t *testing.T) {
 		expected := []entity.Ideogram{
