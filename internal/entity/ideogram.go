@@ -9,6 +9,7 @@ var (
 	ErrEmptyPinyin      = errors.New("pinyin is required")
 	ErrEmptyMeanings    = errors.New("at least one meaning is required")
 	ErrInvalidCharacter = errors.New("invalid character: must be a single ideogram")
+	ErrEmptyMeaning     = errors.New("meaning is required for searching ideograms")
 )
 
 // Ideogram representa a entidade de um ideograma mandarim no nosso sistema

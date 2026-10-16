@@ -54,7 +54,11 @@ func main() {
 	getIdeogramByCharacterUseCase := usecase.NewGetIdeogramByCharacterUseCase(ideogramRepo)
 	getIdeogramByCharacterHandler := handlers.NewGetIdeogramByCharacterHandler(getIdeogramByCharacterUseCase)
 
+	searchIdeogramsByMeaningUseCase := usecase.NewSearchIdeogramsByMeaningUseCase(ideogramRepo)
+	searchIdeogramsByMeaningHandler := handlers.NewSearchIdeogramsByMeaningHandler(searchIdeogramsByMeaningUseCase)
+
 	mux.Handle("GET /ideograms/{character}", getIdeogramByCharacterHandler)
+	mux.Handle("GET /ideograms/search", searchIdeogramsByMeaningHandler)
 
 	fmt.Printf("Servidor HTTP rodando na porta %s...\n", serverPort)
 	if err := http.ListenAndServe(":"+serverPort, mux); err != nil {
