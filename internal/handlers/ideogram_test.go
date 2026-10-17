@@ -35,7 +35,7 @@ func TestTranslateHandlerReal(t *testing.T) {
 	// 1. Montamos a cadeia de dependências (Repositório Falso -> UseCase -> Handler)
 	repo := &mockRepoForHandler{}
 	uc := usecase.NewTranslateIdeogramUseCase(repo)
-	handler := handlers.NewIdeogramHandler(uc)
+	handler := handlers.NewIdeogramHandler(uc, nil)
 
 	// 2. Configurar o roteador idêntico ao da aplicação real
 	mux := http.NewServeMux()
@@ -75,4 +75,10 @@ func (m *mockRepoForHandler) Update(
 	ideog *entity.Ideogram,
 ) (*entity.Ideogram, error) {
 	return nil, entity.ErrNotFound
+}
+
+func (m *mockRepoForHandler) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
 }

@@ -21,9 +21,60 @@ func NewPostgresIdeogramRepository(db *pgx.Conn) *PostgresIdeogramRepository {
 	}
 }
 
+func (r *PostgresIdeogramRepository) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	query := `
+        SELECT id, character, pinyin, COALESCE(meanings, '{}'), COALESCE(radical, ''), COALESCE(stroke_count, 0)
+        FROM ideograms
+        ORDER BY character;
+    `
+
+	rows, err := r.db.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf(
+			"erro ao listar ideogramas: %w",
+			err,
+		)
+	}
+	defer rows.Close()
+
+	ideograms := make([]entity.Ideogram, 0)
+
+	for rows.Next() {
+		var ideog entity.Ideogram
+
+		err := rows.Scan(
+			&ideog.ID,
+			&ideog.Character,
+			&ideog.Pinyin,
+			&ideog.Meanings,
+			&ideog.Radical,
+			&ideog.StrokeCount,
+		)
+		if err != nil {
+			return nil, fmt.Errorf(
+				"erro ao ler ideograma listado: %w",
+				err,
+			)
+		}
+
+		ideograms = append(ideograms, ideog)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf(
+			"erro ao percorrer ideogramas: %w",
+			err,
+		)
+	}
+
+	return ideograms, nil
+}
+
 func (r *PostgresIdeogramRepository) FindByCharacter(ctx context.Context, char string) (*entity.Ideogram, error) {
 	query := `
-		SELECT id, character, pinyin, meanings, radical, stroke_count 
+		SELECT id, character, pinyin, COALESCE(meanings, '{}'), COALESCE(radical, ''), COALESCE(stroke_count, 0) 
 		FROM ideograms 
 		WHERE character = $1
 	`
@@ -54,7 +105,7 @@ func (r *PostgresIdeogramRepository) SearchByMeaning(
 	meaning string,
 ) ([]entity.Ideogram, error) {
 	query := `
-		SELECT id, character, pinyin, meanings, radical, stroke_count
+		SELECT id, character, pinyin, COALESCE(meanings, '{}'), COALESCE(radical, ''), COALESCE(stroke_count, 0)
 		FROM ideograms
 		WHERE EXISTS (
 			SELECT 1

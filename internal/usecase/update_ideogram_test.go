@@ -72,6 +72,12 @@ func (m *updateIdeogramRepoMock) Update(
 	return &result, nil
 }
 
+func (m *updateIdeogramRepoMock) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 func existingIdeogram() *entity.Ideogram {
 	return &entity.Ideogram{
 		ID:          1,

@@ -41,6 +41,12 @@ func (m *MockIdeogramRepository) Update(
 	return nil, entity.ErrNotFound
 }
 
+func (m *MockIdeogramRepository) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 // 2. Teste Unitário da Regra de Negócio de Tradução
 func TestTranslateIdeogramUseCase_Execute(t *testing.T) {
 	// Preparamos dados falsos que estariam no "banco"

@@ -54,6 +54,12 @@ func (m *createIdeogramHandlerMockRepo) Update(
 	return nil, entity.ErrNotFound
 }
 
+func (m *createIdeogramHandlerMockRepo) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 func newCreateIdeogramTestHandler(
 	repo *createIdeogramHandlerMockRepo,
 ) http.Handler {

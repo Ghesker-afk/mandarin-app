@@ -55,6 +55,12 @@ func validIdeogram() *entity.Ideogram {
 	}
 }
 
+func (m *createIdeogramRepoMock) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 func TestCreateIdeogramUseCase_ExecuteSuccess(t *testing.T) {
 	repo := &createIdeogramRepoMock{}
 	uc := NewCreateIdeogramUseCase(repo)

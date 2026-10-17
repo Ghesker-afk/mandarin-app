@@ -63,6 +63,12 @@ func (m *updateHandlerRepoMock) Update(
 	return &result, nil
 }
 
+func (m *updateHandlerRepoMock) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 func TestUpdateIdeogramHandler_Success(t *testing.T) {
 	// Arrange: preparar as dependências e os dados.
 	repo := &updateHandlerRepoMock{

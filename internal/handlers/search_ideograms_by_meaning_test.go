@@ -45,6 +45,12 @@ func (m *searchMeaningHandlerMockRepo) Update(
 	return nil, entity.ErrNotFound
 }
 
+func (m *searchMeaningHandlerMockRepo) FindAll(
+	ctx context.Context,
+) ([]entity.Ideogram, error) {
+	return []entity.Ideogram{}, nil
+}
+
 func newSearchMeaningTestHandler(
 	repo *searchMeaningHandlerMockRepo,
 ) http.Handler {

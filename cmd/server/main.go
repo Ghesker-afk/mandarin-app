@@ -36,10 +36,15 @@ func main() {
 	}
 	defer dbConn.Close(ctx)
 
-	// 3. Montando a Clean Architecture: Infra -> Usecase -> Handler
 	ideogramRepo := postgres.NewPostgresIdeogramRepository(dbConn)
+
 	translateUC := usecase.NewTranslateIdeogramUseCase(ideogramRepo)
-	ideogramHandler := handlers.NewIdeogramHandler(translateUC)
+	listIdeogramsUC := usecase.NewListIdeogramsUseCase(ideogramRepo)
+
+	ideogramHandler := handlers.NewIdeogramHandler(
+		translateUC,
+		listIdeogramsUC,
+	)
 
 	// 4. Configura as Rotas usando o net/http moderno (Go 1.22+)
 	mux := http.NewServeMux()
@@ -63,6 +68,7 @@ func main() {
 
 	mux.Handle("GET /ideograms/{character}", getIdeogramByCharacterHandler)
 	mux.Handle("GET /ideograms/search", searchIdeogramsByMeaningHandler)
+	mux.HandleFunc("GET /ideograms", ideogramHandler.ListIdeogramsHandler)
 
 	fmt.Printf("Servidor HTTP rodando na porta %s...\n", serverPort)
 	if err := http.ListenAndServe(":"+serverPort, mux); err != nil {
