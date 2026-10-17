@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react'
 import SearchPage from './pages/SearchPage'
+import TranslatorPage from './pages/TranslatorPage'
 
 const navigation = [
   { label: 'Início', icon: Home },
@@ -141,6 +142,8 @@ function App() {
         <div className="mx-auto max-w-7xl space-y-9 px-5 py-8 sm:px-8 lg:px-12 lg:py-10">
           {activePage === 'Pesquisar' ? (
             <SearchPage />
+          ) : activePage === 'Tradutor' ? (
+            <TranslatorPage />
           ) : (
             <>
               <section className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-[#123b35] via-[#20584b] to-[#628b76] px-7 py-10 text-white sm:px-12 sm:py-14">
