@@ -37,3 +37,9 @@ export async function searchByMeaning(
 
   return handleResponse<Ideogram[]>(response)
 }
+
+
+export async function listAll(): Promise<Ideogram[]> {
+  const response = await fetch(`${API_BASE_URL}/ideograms`);
+  return handleResponse<Ideogram[]>(response);
+}

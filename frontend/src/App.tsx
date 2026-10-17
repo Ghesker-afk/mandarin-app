@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import SearchPage from './pages/SearchPage'
 import TranslatorPage from './pages/TranslatorPage'
+import MyIdeogramsPage from './pages/MyIdeogramsPage'
 
 const navigation = [
   { label: 'Início', icon: Home },
@@ -34,7 +35,7 @@ const features = [
   },
   {
     title: 'Meus ideogramas',
-    description: 'Sua futura coleção pessoal de caracteres.',
+    description: 'Consulte todos os caracteres cadastrados.',
     icon: Layers3,
   },
 ]
@@ -144,7 +145,9 @@ function App() {
             <SearchPage />
           ) : activePage === 'Tradutor' ? (
             <TranslatorPage />
-          ) : (
+          ) : activePage === 'Meus ideogramas' ? (
+            <MyIdeogramsPage />
+          ) : (   
             <>
               <section className="relative isolate overflow-hidden rounded-3xl bg-gradient-to-br from-[#123b35] via-[#20584b] to-[#628b76] px-7 py-10 text-white sm:px-12 sm:py-14">
                 <div
